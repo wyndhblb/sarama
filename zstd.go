@@ -1,6 +1,7 @@
 package sarama
 
 import (
+	"bytes"
 	"github.com/klauspost/compress/zstd"
 	"sync"
 )
@@ -10,6 +11,11 @@ var (
 		New: func() interface{} {
 			p, _ := zstd.NewWriter(nil)
 			return p
+		},
+	}
+	zstdBytePool = sync.Pool{
+		New: func() interface{} {
+			return bytes.NewBuffer(nil)
 		},
 	}
 	zstdReaderPool = sync.Pool{
@@ -22,6 +28,12 @@ var (
 
 func zstdDecompress(dst, src []byte) ([]byte, error) {
 	reader := zstdReaderPool.Get().(*zstd.Decoder)
+	if dst == nil{
+		bs := zstdBytePool.Get().(*bytes.Buffer)
+		bs.Reset()
+		dst = bs.Bytes()
+		zstdBytePool.Put(bs)
+	}
 	defer zstdReaderPool.Put(reader)
 	return reader.DecodeAll(src, dst)
 }
