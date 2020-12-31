@@ -20,7 +20,7 @@ var (
 	}
 	zstdReaderPool = sync.Pool{
 		New: func() interface{} {
-			p, _ := zstd.NewReader(nil)
+			p, _ := zstd.NewReader(nil, zstd.WithDecoderLowmem(false), zstd.WithDecoderConcurrency(2))
 			return p
 		},
 	}
