@@ -1,7 +1,6 @@
 package sarama
 
 import (
-	"bytes"
 	"github.com/klauspost/compress/zstd"
 	"sync"
 )
