@@ -7,9 +7,10 @@ import (
 )
 
 var (
+	zstdWriter, _ = zstd.NewWriter(nil)
 	zstdWriterPool = sync.Pool{
 		New: func() interface{} {
-			p, _ := zstd.NewWriter(nil)
+			p, _ := zstd.NewWriter(nil, zstd.WithEncoderLevel(zstd.SpeedFastest))
 			return p
 		},
 	}
@@ -18,6 +19,7 @@ var (
 			return bytes.NewBuffer(nil)
 		},
 	}
+	zstdReader, _ = zstd.NewReader(nil)
 	zstdReaderPool = sync.Pool{
 		New: func() interface{} {
 			p, _ := zstd.NewReader(nil, zstd.WithDecoderLowmem(false), zstd.WithDecoderConcurrency(2))
@@ -27,6 +29,9 @@ var (
 )
 
 func zstdDecompress(dst, src []byte) ([]byte, error) {
+
+	return zstdReader.DecodeAll(src, dst)
+
 	reader := zstdReaderPool.Get().(*zstd.Decoder)
 	if dst == nil{
 		bs := zstdBytePool.Get().(*bytes.Buffer)
@@ -39,6 +44,9 @@ func zstdDecompress(dst, src []byte) ([]byte, error) {
 }
 
 func zstdCompress(dst, src []byte) ([]byte, error) {
+	bs := zstdWriter.EncodeAll(src, dst)
+	return bs, nil
+
 	writer := zstdWriterPool.Get().(*zstd.Encoder)
 	defer zstdWriterPool.Put(writer)
 	bs := writer.EncodeAll(src, dst)
