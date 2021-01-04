@@ -4,10 +4,13 @@ import (
 	"github.com/klauspost/compress/zstd"
 )
 
-var (
+var zstdDec *zstd.Decoder
+var zstdEnc *zstd.Encoder
+
+func init(){
 	zstdDec, _ = zstd.NewReader(nil)
 	zstdEnc, _ = zstd.NewWriter(nil, zstd.WithZeroFrames(true))
-)
+}
 
 func zstdDecompress(dst, src []byte) ([]byte, error) {
 	return zstdDec.DecodeAll(src, dst)
