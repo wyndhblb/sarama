@@ -10,8 +10,7 @@ var (
 )
 
 func zstdDecompress(dst, src []byte) ([]byte, error) {
-	d, _ :=  zstd.NewReader(nil)
-	return d.DecodeAll(src, dst)
+	return zstdDec.DecodeAll(src, dst)
 }
 
 func zstdCompress(dst, src []byte) ([]byte, error) {
