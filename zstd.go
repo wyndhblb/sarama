@@ -2,14 +2,18 @@ package sarama
 
 import (
 	"github.com/klauspost/compress/zstd"
+	"sync"
 )
 
 var zstdDec *zstd.Decoder
 var zstdEnc *zstd.Encoder
+var once = sync.Once{}
 
 func init(){
-	zstdDec, _ = zstd.NewReader(nil)
-	zstdEnc, _ = zstd.NewWriter(nil, zstd.WithZeroFrames(true))
+	once.Do(func() {
+		zstdDec, _ = zstd.NewReader(nil)
+		zstdEnc, _ = zstd.NewWriter(nil, zstd.WithZeroFrames(true))
+	})
 }
 
 func zstdDecompress(dst, src []byte) ([]byte, error) {
