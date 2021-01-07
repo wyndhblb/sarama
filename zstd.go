@@ -7,7 +7,6 @@ import (
 var zstdDec, _ = zstd.NewReader(nil)
 var zstdEnc, _ = zstd.NewWriter(nil, zstd.WithZeroFrames(true))
 
-
 func zstdDecompress(dst, src []byte) ([]byte, error) {
 	return zstdDec.DecodeAll(src, dst)
 }
