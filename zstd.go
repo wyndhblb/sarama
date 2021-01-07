@@ -7,10 +7,10 @@ import (
 
 var zstdDec *zstd.Decoder
 var zstdEnc *zstd.Encoder
-var once = sync.Once{}
+var zstdOnce = sync.Once{}
 
 func init(){
-	once.Do(func() {
+	zstdOnce.Do(func() {
 		zstdDec, _ = zstd.NewReader(nil)
 		zstdEnc, _ = zstd.NewWriter(nil, zstd.WithZeroFrames(true))
 	})
